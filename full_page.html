@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Media Enhancement - No Blur, Better Audio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            flex: 1;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+        
+        .enhancement-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+        
+        .fixes-banner {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .fixes-banner h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .fixes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .fix-item {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .fix-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .fix-item p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .upload-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 20px;
+            padding: 60px 30px;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .upload-area:hover {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .upload-area.dragover {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.2);
+            transform: scale(1.02);
+        }
+        
+        .upload-area h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .upload-area p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+        
+        .btn.enhance {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        .btn.enhance:hover {
+            background: linear-gradient(135deg, #20c997, #28a745);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn.download {
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+        }
+        
+        .btn.download:hover {
+            background: linear-gradient(135deg, #fd7e14, #dc3545);
+            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .file-info {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 5px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            display: none;
+        }
+        
+        .file-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: rgba(255,255,255,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .progress-section {
+            margin: 40px 0;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #333;
+            margin: 10px 0;
+        }
+        
+        .result-section {
+            margin: 40px 0;
+            padding: 30px;
+            border-radius: 15px;
+            display: none;
+            animation: slideUp 0.5s ease;
+        }
+        
+        .result-section.success {
+            background: rgba(40, 167, 69, 0.1);
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .result-section.error {
+            background: rgba(220, 53, 69, 0.1);
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .enhancement-card { padding: 20px; }
+            .upload-area { padding: 40px 20px; }
+            .fixes-grid { grid-template-columns: 1fr; }
+            .file-stats { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .header { padding: 20px; }
+            .header h1 { font-size: 1.8rem; }
+            .main-content { padding: 0 10px 20px; }
+            .enhancement-card { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎭 Fixed Media Enhancer</h1>
+        <p>Professional quality enhancement without blur or playback issues</p>
+    </div>
+    
+    <div class="main-content">
+        <div class="enhancement-card">
+            <div class="fixes-banner">
+                <h2>🛠️ All Issues Fixed in This Version</h2>
+                <div class="fixes-grid">
+                    <div class="fix-item">
+                        <h3>✅ No More Blur</h3>
+                        <p>Gentle algorithms preserve sharpness while enhancing quality</p>
+                    </div>
+                    <div class="fix-item">
+                        <h3>✅ Audio Works Perfect</h3>
+                        <p>Proper codec handling ensures perfect playback compatibility</p>
+                    </div>
+                    <div class="fix-item">
+                        <h3>✅ Quality Preserved</h3>
+                        <p>Edge-preserving enhancements maintain original detail</p>
+                    </div>
+                    <div class="fix-item">
+                        <h3>✅ Better Processing</h3>
+                        <p>Optimized parameters for each media type</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <h3>📁 Drop Your Files Here</h3>
+                    <p>Supports all common formats - Images, Audio, Video</p>
+                    <p style="font-size: 0.9rem; opacity: 0.7;">JPG, PNG, BMP • MP3, WAV, OGG • MP4, AVI, MOV</p>
+                    <button class="btn" onclick="document.getElementById('fileInput').click()">
+                        📂 Choose Files
+                    </button>
+                    <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.bmp,.tiff,.mp3,.wav,.ogg,.flac,.aac,.mp4,.mov,.avi,.mkv,.webm">
+                </div>
+                
+                <div id="fileInfo" class="file-info">
+                    <h4>📄 Selected File Details</h4>
+                    <div class="file-stats" id="fileStats"></div>
+                </div>
+                
+                <button class="btn enhance" id="enhanceBtn" disabled onclick="enhanceFile()">
+                    🚀 Enhance With Fixed Algorithms
+                </button>
+                
+                <div class="progress-section" id="progressSection">
+                    <div class="progress-text" id="progressText">Processing...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                
+                <div id="resultSection" class="result-section"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileStats = document.getElementById('fileStats');
+        const enhanceBtn = document.getElementById('enhanceBtn');
+        const progressSection = document.getElementById('progressSection');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const resultSection = document.getElementById('resultSection');
+
+        // File input change
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFile = files[0];
+                displayFileInfo();
+            }
+        });
+
+        function handleFileSelect() {
+            selectedFile = fileInput.files[0];
+            displayFileInfo();
+        }
+
+        function displayFileInfo() {
+            if (selectedFile) {
+                const fileSize = (selectedFile.size / 1024 / 1024).toFixed(2);
+                const fileType = getFileType(selectedFile.name);
+                
+                fileStats.innerHTML = `
+                    <div class="stat-box">
+                        <div class="stat-value">${selectedFile.name}</div>
+                        <div class="stat-label">File Name</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">${fileSize} MB</div>
+                        <div class="stat-label">File Size</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">${fileType}</div>
+                        <div class="stat-label">Media Type</div>
+                    </div>
+                `;
+                
+                fileInfo.style.display = 'block';
+                enhanceBtn.disabled = false;
+                enhanceBtn.classList.add('pulse');
+                resultSection.style.display = 'none';
+            }
+        }
+
+        function getFileType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'bmp', 'tiff'].includes(ext)) {
+                return '🖼️ Image';
+            } else if (['mp3', 'wav', 'ogg', 'flac', 'aac'].includes(ext)) {
+                return '🎵 Audio';
+            } else if (['mp4', 'mov', 'avi', 'mkv', 'webm'].includes(ext)) {
+                return '🎬 Video';
+            }
+            return '❓ Unknown';
+        }
+
+        function enhanceFile() {
+            if (!selectedFile) {
+                alert('Please select a file first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            enhanceBtn.disabled = true;
+            enhanceBtn.classList.remove('pulse');
+            enhanceBtn.innerHTML = '⚡ Processing...';
+            progressSection.style.display = 'block';
+            resultSection.style.display = 'none';
+
+            // Progress simulation
+            let progress = 0;
+            const stages = [
+                'Loading file...',
+                'Analyzing content...',
+                'Applying noise reduction...',
+                'Enhancing quality...',
+                'Optimizing output...',
+                'Finalizing...'
+            ];
+            let stageIndex = 0;
+
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 95) progress = 95;
+                
+                if (progress > stageIndex * 15 && stageIndex < stages.length) {
+                    progressText.textContent = stages[stageIndex];
+                    stageIndex++;
+                }
+                
+                progressFill.style.width = progress + '%';
+            }, 1000);
+
+            fetch('/upload-universal', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Complete!';
+                
+                setTimeout(() => {
+                    progressSection.style.display = 'none';
+                    enhanceBtn.disabled = false;
+                    enhanceBtn.innerHTML = '🚀 Enhance With Fixed Algorithms';
+                    
+                    if (data.success) {
+                        const outputSizeMB = (data.output_size / 1024 / 1024).toFixed(2);
+                        const originalSizeMB = (selectedFile.size / 1024 / 1024).toFixed(2);
+                        
+                        resultSection.className = 'result-section success';
+                        resultSection.innerHTML = `
+                            <h3>🎉 Enhancement Successful!</h3>
+                            <p><strong>Fixed Algorithm Applied:</strong> ${data.message}</p>
+                            <div class="file-stats" style="margin: 20px 0;">
+                                <div class="stat-box">
+                                    <div class="stat-value">${originalSizeMB} MB</div>
+                                    <div class="stat-label">Original Size</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value">${outputSizeMB} MB</div>
+                                    <div class="stat-label">Enhanced Size</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value">✅ Fixed</div>
+                                    <div class="stat-label">All Issues</div>
+                                </div>
+                            </div>
+                            <div style="text-align: center;">
+                                <a href="${data.download_url}" class="btn download">
+                                    📥 Download Enhanced File
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        resultSection.className = 'result-section error';
+                        resultSection.innerHTML = `
+                            <h3>❌ Enhancement Failed</h3>
+                            <p><strong>Error:</strong> ${data.error}</p>
+                        `;
+                    }
+                    resultSection.style.display = 'block';
+                }, 1500);
+            })
+            .catch(error => {
+                clearInterval(progressInterval);
+                progressSection.style.display = 'none';
+                enhanceBtn.disabled = false;
+                enhanceBtn.innerHTML = '🚀 Enhance With Fixed Algorithms';
+                
+                resultSection.className = 'result-section error';
+                resultSection.innerHTML = `
+                    <h3>🔌 Connection Error</h3>
+                    <p><strong>Network Error:</strong> ${error.message}</p>
+                `;
+                resultSection.style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>

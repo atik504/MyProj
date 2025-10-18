@@ -1,0 +1,13 @@
+Flask==2.3.3
+opencv-python==4.8.1.78
+numpy==1.24.3
+Pillow==10.0.1
+librosa==0.10.1
+soundfile==0.12.1
+scipy==1.11.4
+scikit-image==0.21.0
+tensorflow==2.13.0
+torch==2.0.1
+torchvision==0.15.2
+noisereduce==3.0.0
+Werkzeug==2.3.7

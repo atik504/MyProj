@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Media Enhancement - No Blur, Better Audio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+            font-weight: 300;
+        }
+        .fixes-banner {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .fixes-banner h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.3em;
+        }
+        .fixes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .fix-item {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+        .fix-item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 50px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        }
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateY(-5px);
+        }
+        .upload-area.dragover {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+            transform: scale(1.02);
+        }
+        #fileInput {
+            display: none;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .upload-btn:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .enhance-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        .enhance-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        .enhance-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+            color: white;
+        }
+        .download-btn:hover {
+            background: linear-gradient(135deg, #FF8E8E, #FF6B6B);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        .file-info {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        .progress-container {
+            margin: 20px 0;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #667eea;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+        .result.success {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(69, 160, 73, 0.1));
+            border: 2px solid #4CAF50;
+            color: #2E7D32;
+        }
+        .result.error {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 142, 142, 0.1));
+            border: 2px solid #FF6B6B;
+            color: #C62828;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.5);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .fixes-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .container {
+                padding: 15px;
+            }
+            .upload-area {
+                padding: 30px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Fixed Media Enhancer</h1>
+        <p class="subtitle">Professional quality enhancement without blur or playback issues</p>
+        
+        <div class="fixes-banner">
+            <h3>🛠️ Problems Fixed in This Version:</h3>
+            <div class="fixes-grid">
+                <div class="fix-item">
+                    <strong>✅ No More Blur</strong>
+                    Gentle algorithms preserve sharpness
+                </div>
+                <div class="fix-item">
+                    <strong>✅ Audio Works</strong>
+                    Proper codec handling & compatibility
+                </div>
+                <div class="fix-item">
+                    <strong>✅ Quality Preserved</strong>
+                    Edge-preserving enhancements only
+                </div>
+                <div class="fix-item">
+                    <strong>✅ Better Processing</strong>
+                    Optimized parameters for each media type
+                </div>
+            </div>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+            <h3>📁 Drop Your File Here</h3>
+            <p style="margin: 15px 0; color: #666;">Supports all common formats</p>
+            <p style="font-size: 14px; color: #999;">Images: JPG, PNG, BMP • Audio: MP3, WAV, OGG • Video: MP4, AVI, MOV</p>
+            <button type="button" class="btn upload-btn" onclick="document.getElementById('fileInput').click()">
+                📂 Choose File
+            </button>
+            <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.bmp,.tiff,.mp3,.wav,.ogg,.flac,.aac,.mp4,.mov,.avi,.mkv,.webm">
+        </div>
+
+        <div id="fileInfo" class="file-info" style="display: none;"></div>
+
+        <div style="text-align: center;">
+            <button type="button" class="btn enhance-btn" id="enhanceBtn" disabled onclick="enhanceFile()">
+                🚀 Enhance With Fixed Algorithms
+            </button>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Processing...</div>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInfo = document.getElementById('fileInfo');
+        const enhanceBtn = document.getElementById('enhanceBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const result = document.getElementById('result');
+
+        // File input change event
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop events
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFile = files[0];
+                displayFileInfo();
+            }
+        });
+
+        function handleFileSelect() {
+            selectedFile = fileInput.files[0];
+            displayFileInfo();
+        }
+
+        function displayFileInfo() {
+            if (selectedFile) {
+                const fileSize = (selectedFile.size / 1024 / 1024).toFixed(2);
+                const fileType = getFileType(selectedFile.name);
+                const fileSizeKB = (selectedFile.size / 1024).toFixed(0);
+                
+                fileInfo.innerHTML = `
+                    <h4>📄 Selected File Details</h4>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${selectedFile.name}</div>
+                            <div class="stat-label">File Name</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${fileSize} MB</div>
+                            <div class="stat-label">File Size</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${fileType}</div>
+                            <div class="stat-label">Media Type</div>
+                        </div>
+                    </div>
+                `;
+                fileInfo.style.display = 'block';
+                enhanceBtn.disabled = false;
+                enhanceBtn.classList.add('pulse');
+                result.style.display = 'none';
+            }
+        }
+
+        function getFileType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'bmp', 'tiff'].includes(ext)) {
+                return '🖼️ Image';
+            } else if (['mp3', 'wav', 'ogg', 'flac', 'aac'].includes(ext)) {
+                return '🎵 Audio';
+            } else if (['mp4', 'mov', 'avi', 'mkv', 'webm'].includes(ext)) {
+                return '🎬 Video';
+            }
+            return '❓ Unknown';
+        }
+
+        function enhanceFile() {
+            if (!selectedFile) {
+                alert('Please select a file first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            enhanceBtn.disabled = true;
+            enhanceBtn.classList.remove('pulse');
+            enhanceBtn.innerHTML = '⚡ Processing with Fixed Algorithms...';
+            progressContainer.style.display = 'block';
+            result.style.display = 'none';
+
+            // Enhanced progress simulation
+            let progress = 0;
+            const stages = [
+                'Loading file...',
+                'Analyzing media...',
+                'Applying noise reduction...',
+                'Enhancing quality...',
+                'Optimizing output...',
+                'Finalizing...'
+            ];
+            let stageIndex = 0;
+
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 12;
+                if (progress > 95) {
+                    progress = 95;
+                }
+                
+                if (progress > stageIndex * 15 && stageIndex < stages.length) {
+                    progressText.textContent = stages[stageIndex];
+                    stageIndex++;
+                }
+                
+                progressFill.style.width = progress + '%';
+            }, 800);
+
+            fetch('/upload-universal', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Complete!';
+                
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    enhanceBtn.disabled = false;
+                    enhanceBtn.innerHTML = '🚀 Enhance With Fixed Algorithms';
+                    
+                    if (data.success) {
+                        const outputSizeMB = (data.output_size / 1024 / 1024).toFixed(2);
+                        const originalSizeMB = (selectedFile.size / 1024 / 1024).toFixed(2);
+                        
+                        result.className = 'result success';
+                        result.innerHTML = `
+                            <h4>🎉 Enhancement Successful!</h4>
+                            <p><strong>Fixed Algorithm Applied:</strong> ${data.message}</p>
+                            <div class="stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">${originalSizeMB} MB</div>
+                                    <div class="stat-label">Original Size</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${outputSizeMB} MB</div>
+                                    <div class="stat-label">Enhanced Size</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">✅ Fixed</div>
+                                    <div class="stat-label">Quality Issues</div>
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <a href="${data.download_url}" class="btn download-btn">
+                                    📥 Download Enhanced File
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        result.className = 'result error';
+                        result.innerHTML = `
+                            <h4>❌ Enhancement Failed</h4>
+                            <p><strong>Error:</strong> ${data.error}</p>
+                            <p>Please try a different file or contact support.</p>
+                        `;
+                    }
+                    result.style.display = 'block';
+                }, 1500);
+            })
+            .catch(error => {
+                clearInterval(progressInterval);
+                progressContainer.style.display = 'none';
+                enhanceBtn.disabled = false;
+                enhanceBtn.innerHTML = '🚀 Enhance With Fixed Algorithms';
+                
+                result.className = 'result error';
+                result.innerHTML = `
+                    <h4>🔌 Connection Error</h4>
+                    <p><strong>Network Error:</strong> ${error.message}</p>
+                    <p>Please check your connection and try again.</p>
+                `;
+                result.style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>
