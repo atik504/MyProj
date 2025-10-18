@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="VidSharp AI - Transform your videos with cutting-edge AI enhancement technology. Upscale to 4K, reduce noise, enhance colors, and more.">
+  <title>VidSharp AI - Advanced Video Enhancement</title>
+  <!-- Import fonts for variety -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700&family=Roboto:wght@300;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* RESET */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: #fff;
+      background-color: #000; /* Black background */
+      overflow-x: hidden;
+      perspective: 1200px; /* Adds perspective for 3D effect */
+    }
+    /* MAIN WRAPPER */
+    .page-wrapper {
+      width: 100%;
+      min-height: 100vh;
+    }
+    /*******************************************
+     * HERO SECTION (BLACK BG, ORANGE ACCENTS)
+     *******************************************/
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 60px 5%;
+      background-color: #000;
+      transform-style: preserve-3d; /* Necessary for 3D effect */
+      transform: rotateY(10deg); /* Subtle rotation for 3D effect */
+    }
+    /* LEFT SIDE: fade in from left */
+    .hero-left {
+      flex: 1;
+      min-width: 300px;
+      margin-bottom: 30px;
+      opacity: 0;
+      animation: fadeInLeft 1.2s ease forwards; /* Keyframe below */
+      transform: translateZ(30px); /* Lifts up the text for 3D effect */
+    }
+    .hero-left h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+    /* ONLINE pill */
+    .online-pill {
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #FFB703; /* Orange accent */
+      color: #000;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 12px;
+      margin-left: 10px;
+      vertical-align: middle;
+      transition: transform 0.3s ease;
+    }
+    .online-pill:hover {
+      transform: scale(1.05);
+    }
+    /* Outline button */
+    .hero-button {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 24px;
+      background-color: transparent;
+      color: #fff;
+      font-weight: 500;
+      font-size: 1rem;
+      text-decoration: none;
+      border: 2px solid #FFB703;
+      border-radius: 6px;
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+      transform: translateZ(10px); /* Lifts the button slightly */
+    }
+    .hero-button:hover {
+      background-color: #FFB703;
+      color: #000;
+      transform: scale(1.05) translateY(-5px); /* Slight elevation effect */
+    }
+    /* RIGHT SIDE: fade in from right */
+    .hero-right {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeInRight 1.2s ease forwards 0.3s; /* 0.3s delay */
+      transform: translateZ(40px); /* Lifts the image for 3D effect */
+    }
+    .hero-right img {
+      max-width: 100%;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+    .hero-right img:hover {
+      transform: scale(1.02) translateZ(20px); /* Slight 3D effect on hover */
+    }
+    /* KEYFRAMES for hero animations */
+    @keyframes fadeInLeft {
+      0% {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    @keyframes fadeInRight {
+      0% {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    /* ANIMATIONS */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /*******************************************
+     * BEFORE & AFTER VIDEO SECTION
+     *******************************************/
+    .video-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 60px;
+      padding: 80px 20px;
+      background-color: #111; /* Slightly lighter black */
+    }
+    .video-block {
+      background: #1b1b1b;
+      border: 1px solid #333;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transform-style: preserve-3d; /* Ensure 3D effect for hover */
+    }
+    .video-block:hover {
+      transform: rotateY(10deg) scale(1.05); /* 3D tilt effect */
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+    .video-block h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #fff;
+      letter-spacing: 1px;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+    video {
+      width: 100%;
+      display: block;
+      border-radius: 8px;
+    }
+
+    /*******************************************
+     * ABOUT SECTION (fade in from below)
+     *******************************************/
+    .about-section {
+      padding: 60px 20px;
+      background: #000;
+      text-align: center;
+      opacity: 0;
+      animation: fadeInUp 1.2s ease forwards 1s; /* Keyframe below, 1s delay */
+    }
+    .about-section h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+    .about-section p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto 30px;
+      line-height: 1.6;
+      color: #ccc;
+    }
+    /* Keyframe for about section fade in */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /*******************************************
+     * NEXT PAGE BUTTON
+     *******************************************/
+    .next-page {
+      text-align: center;
+      margin: 40px 0;
+      background: #000;
+      padding: 20px;
+      opacity: 0;
+      animation: fadeIn 1.2s ease forwards 1.5s; /* fadeIn with 1.5s delay */
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #FFB703;
+      color: #000;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transform: translateZ(10px); /* Elevates the button for 3D effect */
+    }
+    .btn:hover {
+      background-color: #ffcb4d;
+      transform: scale(1.05) translateY(-5px); /* Lift effect on hover */
+    }
+    /* fadeIn keyframe for next-page section */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /*******************************************
+     * RESPONSIVE ADJUSTMENTS
+     *******************************************/
+    @media (max-width: 900px) {
+      .hero {
+        flex-direction: column;
+        transform: none; /* Remove the rotation on smaller screens */
+      }
+      .hero-left, .hero-right {
+        margin-bottom: 40px;
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+      .hero-left h1 {
+        font-size: 3rem;
+      }
+      .video-section {
+        padding: 40px 20px;
+      }
+      .about-section {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+      .next-page {
+        animation: none;
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <!-- LEFT SIDE: Big Title, "ONLINE" pill, Outline Button -->
+    <div class="hero-left">
+      <h1>
+        VidSharp Ai
+        <span class="online-pill">ONLINE</span>
+      </h1>
+      <a href="#video-section" class="hero-button">UPSCALE YOUR VIDEOS WITH US</a>
+    </div>
+
+    <!-- RIGHT SIDE: Image (Replace with your own) -->
+    <div class="hero-right">
+      <img src="phone-image.png" alt="VidSharp AI Demo" />
+    </div>
+  </section>
+
+  <!-- BEFORE & AFTER VIDEO SECTION -->
+  <section id="video-section" class="video-section">
+    <div class="video-block before-block">
+      <h2>Before</h2>
+      <div class="video-container">
+        <video autoplay loop muted>
+          <source src="before.mp4" type="video/mp4">
+          <source src="before.mov" type="video/quicktime">
+          Your browser does not support the video tag.
+        </video>1
+      </div>
+    </div>
+    <div class="video-block after-block">
+      <h2>After</h2>
+      <div class="video-container">
+        <video autoplay loop muted>
+          <source src="after.mp4" type="video/mp4">
+          <source src="after.mov" type="video/quicktime">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section id="about" class="about-section">
+    <h2>About VidSharp AI</h2>
+    <p>
+      VidSharp AI harnesses advanced deep learning to upscale your videos—transforming low-resolution footage into crystal-clear, high-definition masterpieces. Our AI model improves every frame, ensuring your content is sharp, smooth, and stunning.
+    </p>
+    <p>
+      Whether you're a content creator, filmmaker, or simply preserving memories, experience next-level video enhancement with unmatched detail and precision.
+    </p>
+    <a href="main.html" class="btn">Learn More</a>
+  </section>
+
+  <!-- NEXT PAGE BUTTON -->
+  <div class="next-page">
+    <a href="main.html" class="btn">Next Page</a>
+  </div>
+</div>
+</body>
+</html>

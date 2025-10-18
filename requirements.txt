@@ -1,0 +1,23 @@
+# VidSharp AI - Requirements File
+
+# Web Framework
+Flask==2.0.1
+Werkzeug==2.0.1
+
+# Video Processing
+opencv-python
+numpy
+Pillow
+
+# Audio Processing
+librosa
+soundfile
+
+# Data Processing
+scipy
+
+# Utilities
+tqdm==4.62.2
+
+# File Handling
+requests==2.26.0
